@@ -1,0 +1,9 @@
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\bin\Debug\PushDownAutomata.exe.config
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\obj\Debug\PushDownAutomata.csprojResolveAssemblyReference.cache
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\bin\Debug\PushDownAutomata.exe
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\bin\Debug\PushDownAutomata.pdb
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\obj\Debug\PushDownAutomata.exe
+C:\Users\Ailun S\Source\Repos\PushDownAutomata\PushDownAutomata\obj\Debug\PushDownAutomata.pdb
+C:\Users\Ailun S\Source\Repos\PushDownAuto\PushDownAutomata\bin\Debug\PushDownAutomata.exe.config
+C:\Users\Ailun S\Source\Repos\PushDownAuto\PushDownAutomata\obj\Debug\PushDownAutomata.exe
+C:\Users\Ailun S\Source\Repos\PushDownAuto\PushDownAutomata\obj\Debug\PushDownAutomata.pdb
