@@ -1,11 +1,12 @@
 ﻿/*
  * Ailun Shen CS5580
- * Loads, Tests, Minimizes DFSM
+ * Simulates a PushDown Automata
  * start state
  * list of states
  * list of possible input characters
  * list of accepting states
  * transitions
+ * As for the stack a capital E denotes empty
  */
 using System;
 using System.Collections.Generic;
@@ -32,24 +33,13 @@ namespace DFS
         public static void Main(string[] args)
         {
             string path = ".//..//..//..//";
-            String[] options = { "1) Read DFSM", "2) Read Input Strings", "3) Minimize", "4) Exit" };
+            Console.WriteLine("Welcome! This program will simulate a Pushdown Automata");
+            String[] options = { "1) Read DFSM", "2) Read Input Strings", "3) Do Nothing", "4) Exit" };
             Boolean repeat = true;
             string line_buffer;
             //string Start_State = ""; int num_states = 0, num_alphabet = 0, num_accepting_states = 0, num_transitions = 0;
             string[] arraybuffer = new string[1000];
-            FSM machine = null; // null until DFSM is loaded
-            //testing
-            Stack<char> characters = new Stack<char>();
-            characters.Push('a');
-            characters.Push('b');
-            characters.Push('b');
-            characters.Push('c');
-            characters.Push('d');
-            foreach (char letters in characters)
-            {
-                char char_buf = characters.Peek();
-                Console.WriteLine(char_buf);
-            }
+            PDA machine = null; // null until DFSM is loaded
             
             while (repeat)
             {
@@ -60,6 +50,10 @@ namespace DFS
                 {
                     Console.WriteLine("You have chosen option 1. ");
                     machine = loadDFSM();
+                    //testing
+                    machine.PlayStacks('E', 'a', 'E', 'E');
+                    machine.PlayStacks('a', 'E', 'E', 'E');
+                    machine.printStack();
                 }
                 else if (line_buffer.StartsWith("2"))
                 {
@@ -69,8 +63,7 @@ namespace DFS
                 }
                 else if (line_buffer.StartsWith("3"))
                 {
-                    Console.WriteLine("You have chosen option 3.");
-                    Console.WriteLine("Please enter the name of input file:");
+                    Console.WriteLine("You have chosen option 3.");  
                     minimize(machine);
                     //Console.WriteLine("Error, unable to minimize. Something went wrong.");
                 }
@@ -83,7 +76,7 @@ namespace DFS
             UI.Write("Done. Press any key to continue...");
             Console.ReadLine();
         }
-        public static FSM loadDFSM()
+        public static PDA loadDFSM()
         {
             string path = ".//..//..//..//";
             string line_buffer; string Start_State = "";
@@ -92,12 +85,12 @@ namespace DFS
             /*************** reads and processes the DFSM formet file ****************/
             #region
             Console.WriteLine("Please type the name of the states file(default is state.txt):");
-            line_buffer = Console.ReadLine();
-            FileStream fs = new FileStream(path + line_buffer, FileMode.OpenOrCreate, FileAccess.Read);
+            //line_buffer = Console.ReadLine();
+            FileStream fs = new FileStream(path + "state.txt", FileMode.OpenOrCreate, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
 
 
-            //reads the numbers
+            //The Numbers of each Variable
             try
             {
                 line_buffer = sr.ReadLine();
@@ -111,39 +104,63 @@ namespace DFS
             }
             catch (Exception ex)
             {
-                UI.FailMessage("Error, incorrect state input file.");
+                UI.FailMessage("State Input file formatted incorrectly.");
             }
 
             string[] Accepting_States = new string[num_accepting_states];
-            string[,] Finite_State_Array = new string[num_states, num_alphabet];
+            //string[,] Finite_State_Array = new string[num_states, num_alphabet];
             char[] Alphabet_Array = new char[num_alphabet];
-            Start_State = sr.ReadLine();
-            line_buffer = sr.ReadLine();
+            Start_State = sr.ReadLine(); //Reading the Starting State
 
-            string[] States_Array = line_buffer.Split(' ');
+            line_buffer = sr.ReadLine();
+            string[] States_Array = line_buffer.Split(' '); //The total number of States
+
             line_buffer = sr.ReadLine();
             arraybuffer = line_buffer.Split(' ');
             for (int i = 0; i < arraybuffer.Length; i++)
-            {
-                Alphabet_Array[i] = arraybuffer[i][0];
-            }
+                Alphabet_Array[i] = arraybuffer[i][0]; //Processing the alphabet characters(0 and 1 in this case)
+
             line_buffer = sr.ReadLine();
-            Accepting_States = line_buffer.Split(' ');
-            string start, letter, next;
+            Accepting_States = line_buffer.Split(' '); //The Accepting States
+            //string start, letter, next;
+
+            //Start reading the Transitions, which would consist of StartState, Alphabet, Next State
             string[] start_array = new string[num_transitions];
             char[] letter_array = new char[num_transitions];
             string[] next_array = new string[num_transitions];
-            for (int i = 0; i < num_transitions; i++)
+            char[] pop1 = new char[num_transitions];
+            char[] push1 = new char[num_transitions];
+            char[] pop2 = new char[num_transitions];
+            char[] push2 = new char[num_transitions];
+            try
             {
-                line_buffer = sr.ReadLine();
-                arraybuffer = line_buffer.Split(' ');
-                char[] char_buffer = arraybuffer[1].ToCharArray();
-                start_array[i] = arraybuffer[0]; letter_array[i] = char_buffer[0]; next_array[i] = arraybuffer[2];
+                for (int i = 0; i < num_transitions; i++)
+                {
+                    line_buffer = sr.ReadLine();
+                    arraybuffer = line_buffer.Split(' ');
+                    char[] char_buffer = arraybuffer[1].ToCharArray();
+                    start_array[i] = arraybuffer[0];
+                    letter_array[i] = char_buffer[0];
+                    next_array[i] = arraybuffer[2];
+
+                    char_buffer = arraybuffer[3].ToCharArray();
+                    pop1[i] = char_buffer[0];
+                    char_buffer = arraybuffer[4].ToCharArray();
+                    push1[i] = char_buffer[0];
+                    char_buffer = arraybuffer[5].ToCharArray();
+                    pop2[i] = char_buffer[0];
+                    char_buffer = arraybuffer[6].ToCharArray();
+                    push2[i] = char_buffer[0];
+                }
             }
-            String transition_state = "new Transition(\"q0\", '0', \"q0\")";
+            catch (Exception ex) 
+            { Console.WriteLine("Incorrect Input File."); }
+            
+            //String transition_state = "new Transition(\"q0\", '0', \"q0\")";
             #endregion
             List<String> Q_States; List<char> Alpha; List<Transition> Trans_Delta;
-            //States_Array
+
+
             Q_States = new List<string> { }; //states
             Alpha = new List<char> { }; //alphabets
             Trans_Delta = new List<Transition> { };
@@ -158,14 +175,16 @@ namespace DFS
             }
             for (int i = 0; i < num_transitions; i++)
             {
-                Trans_Delta.Add(new Transition(start_array[i], letter_array[i], next_array[i]));
+                Trans_Delta.Add(new Transition(start_array[i], letter_array[i], next_array[i],pop1[i],push1[1],pop2[i],push2[i]));
             }
 
-            FSM dFSM = new FSM(Q_States, Alpha, Trans_Delta, Start_State, Accepting_States);
+            PDA dFSM = new PDA(Q_States, Alpha, Trans_Delta, Start_State, Accepting_States);
+            //Input Char, Stack Head, From State,  To State, Stack Replace
+            //Starting State, Input AlphabetChars, transitions, Stack Alphabet
             Console.WriteLine("Ok, state machine processed.");
             return dFSM;
         }
-        public static void simulate(String filename, FSM passedFSM)
+        public static void simulate(String filename, PDA passedFSM)
         {
             string path = ".//..//..//..//"; string line_buffer;
             Console.WriteLine("Please type the name of the input file.");
@@ -185,7 +204,7 @@ namespace DFS
                 passedFSM.Check(input_buff[a]);
             }
         }
-        public static void minimize(FSM themachine)
+        public static void minimize(PDA themachine)
         {
             Boolean redun = false;
             if (redun)
@@ -195,7 +214,7 @@ namespace DFS
             }
             else
             {
-                Console.WriteLine("Reject, Unable to Minimize further.");
+                Console.WriteLine("This is a dummy method.");
             }
         }
     }

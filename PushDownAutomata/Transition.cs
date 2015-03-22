@@ -11,15 +11,22 @@ namespace PushDownAutomata
         public string StartState { get; private set; }
         public char Symbol { get; private set; }
         public string EndState { get; private set; }
-
+        public char Pop1 { get; private set; }
+        public char Push1 { get; private set; }
+        public char Pop2 { get; private set; }
+        public char Push2 { get; private set; }
         /**
          * Basic Constructor initializes the StartState, endState and symbol
          * **/
-        public Transition(string startState, char symbol, string endState)
+        public Transition(string startState, char symbol, string endState,char one,char two, char three, char four)
         {
             StartState = startState;
             Symbol = symbol;
             EndState = endState;
+            Pop1 = one;
+            Push1 = two;
+            Pop2 = three;
+            Push2 = four;
         }
 
         /**

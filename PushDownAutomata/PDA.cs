@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PushDownAutomata
 {
-    public class FSM
+    public class PDA
     {
         /** **/
         private readonly List<string> States = new List<string>();
@@ -17,7 +17,8 @@ namespace PushDownAutomata
         public UserUtility UI;
         private readonly List<string> accepting_states = new List<string>();
         private readonly List<string> rejecting_states = new List<string>();
-
+        Stack<char> StackA = new Stack<char>();
+        Stack<char> StackB = new Stack<char>();
         /**
          * 
          * The constructor initializes the 4 main variables(colllections) as well as the User Utility;
@@ -25,7 +26,7 @@ namespace PushDownAutomata
          * Setting up FSM methods
          * @param IEnumerable<string> q, IEnumerable<char> sigma, IEnumerable<Transition> delta, string q0, IEnumerable<string> f
          * **/
-        public FSM(IEnumerable<string> q, IEnumerable<char> sigma, IEnumerable<Transition> delta, string q0, IEnumerable<string> f)
+        public PDA(IEnumerable<string> q, IEnumerable<char> sigma, IEnumerable<Transition> delta, string q0, IEnumerable<string> f)
         {
             States = q.ToList();
             Alphabet = sigma.ToList();
@@ -33,7 +34,7 @@ namespace PushDownAutomata
             AddInitialState(q0);
             AddFinalStates(f);
             UI = new UserUtility();
-            UI.Write("Ok, FSM Object started.");
+            UI.Write("Ok, created a new PDA.");
         }
 
         /**
@@ -89,6 +90,76 @@ namespace PushDownAutomata
             }
         }
 
+        public void PlayStacks(char pop1, char push1, char pop2, char push2)
+        {
+            char alphabet_buffer;
+            if (StackA.Count == 0)
+            {
+                //Console.WriteLine("Empty Stack A, nothing to pop here.");
+            }
+            else if (pop1 == StackA.Peek())
+            {
+                alphabet_buffer = StackA.Pop(); 
+                //Console.WriteLine("Ok, popped {0} on Stack A",pop1);
+            }
+            else
+            {
+                //Console.WriteLine("Nothing to Pop here on Stack A.");
+            }
+            if(push1 != 'E'){
+                StackA.Push(push1);
+                //Console.WriteLine("OK, pushed {0} to Stack A",push1);
+            }      
+            else
+            {
+                //Console.WriteLine("Empty string,nothing to push here on Stack A.");
+            }
+            if (StackB.Count == 0)
+            {
+                //Console.WriteLine("Empty Stack B, nothing to pop here.");
+            }
+            else if (pop2 == StackB.Peek())
+            {
+                StackB.Pop(); 
+                //Console.WriteLine("Ok, popped {0} on Stack B", pop2);
+            }
+            else
+            {
+                //Console.WriteLine("Nothing to pop here on Stack B.");
+            }
+            if (push2 != 'E'){
+                StackB.Push(push2);
+                //Console.WriteLine("OK, pushed {0} on Stack B",push2);
+            }
+            else
+            {
+                //Console.WriteLine("Empty String, Nothing to push here.");
+            }    
+        }
+
+        public void printStack()
+        {
+            Console.WriteLine("Stack A: ");
+            foreach (char x in StackA)
+            {
+                Console.WriteLine(x);
+            }
+            Console.WriteLine("Stack B: ");
+            foreach (char x in StackB)
+            {
+                Console.WriteLine(x);
+            }
+        }
+        public Boolean checkStack()
+        {
+            Boolean empty;
+            if (StackA.Count == 0 && StackB.Count == 0)
+                empty = true;
+            else
+                empty = false;
+            return empty;
+        }
+        /** This method will perform the Minimization **/
         public void checkRedundantState()
         {
             //(trans.Where(ValidTransition)
@@ -114,12 +185,15 @@ namespace PushDownAutomata
             {
                 return;
             }
-            var currentState = accepted_states;
-            var steps = new StringBuilder();
-            foreach (var symbol in input.ToCharArray())
+            string currentState = accepted_states;
+            StringBuilder steps = new StringBuilder();  
+            foreach (char symbol in input.ToCharArray())
             {
-                var transition = Transitions.Find(t => t.StartState == currentState &&
+                Transition transition = Transitions.Find(t => t.StartState == currentState &&
                                                     t.Symbol == symbol);
+                char a,b,c,d;
+                a = transition.Pop1; b = transition.Push1; c = transition.Pop2; d = transition.Push2;
+                PlayStacks(a, b, c, d); //pushes and pops the appropriate stack
                 if (transition == null)
                 {
                     UI.FailMessage("No transitions for current state and symbol");
@@ -128,6 +202,12 @@ namespace PushDownAutomata
                 }
                 currentState = transition.EndState;
                 steps.Append(transition + "\n");
+                //PlayStacks('a','b','c','d');
+            }
+            if (!checkStack())
+            {
+                UI.FailMessage("One or multiple stacks are not empty. Rejected!");
+                return;
             }
             if (Final_States.Contains(currentState))
             {
