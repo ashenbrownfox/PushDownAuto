@@ -137,6 +137,7 @@ namespace PushDownAutomata
             }    
         }
 
+        /** This method prints out the contents of the Stack **/
         public void printStack()
         {
             Console.WriteLine("Stack A: ");
@@ -150,6 +151,7 @@ namespace PushDownAutomata
                 Console.WriteLine(x);
             }
         }
+        /** Performs a check whether or not the stack is empty. **/
         public Boolean checkStack()
         {
             Boolean empty;
@@ -159,7 +161,7 @@ namespace PushDownAutomata
                 empty = false;
             return empty;
         }
-        /** This method will perform the Minimization **/
+        /** Obsolete **/
         public void checkRedundantState()
         {
             //(trans.Where(ValidTransition)
@@ -202,7 +204,6 @@ namespace PushDownAutomata
                 }
                 currentState = transition.EndState;
                 steps.Append(transition + "\n");
-                //PlayStacks('a','b','c','d');
             }
             if (!checkStack())
             {
