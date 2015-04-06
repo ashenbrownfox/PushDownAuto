@@ -11,8 +11,8 @@ namespace PushDownAutomata
         public string StartState { get; private set; }
         public char Symbol { get; private set; }
         public string EndState { get; private set; }
-        public char Pop1 { get; private set; }
-        public char Push1 { get; private set; }
+        public char pop1 { get; private set; }
+        public char push1 { get; private set; }
         public char Pop2 { get; private set; }
         public char Push2 { get; private set; }
         /**
@@ -23,8 +23,8 @@ namespace PushDownAutomata
             StartState = startState;
             Symbol = symbol;
             EndState = endState;
-            Pop1 = one;
-            Push1 = two;
+            pop1 = one;
+            push1 = two;
             Pop2 = three;
             Push2 = four;
         }

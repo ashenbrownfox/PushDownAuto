@@ -1,12 +1,4 @@
-a
-aa
-aaa
-aaaaa
-11111
-1111
-111
-11
-101
-110101
-1010101
-111001
+aacaa
+abcba
+abcccba
+abcab

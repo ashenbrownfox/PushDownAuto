@@ -34,7 +34,7 @@ namespace DFS
         {
             string path = ".//..//..//..//";
             Console.WriteLine("Welcome! This program will simulate a Pushdown Automata");
-            String[] options = { "1) Read DFSM", "2) Read Input Strings", "3) Do Nothing", "4) Exit" };
+            String[] options = { "1) Read PDA", "2) Read Input Strings", "3) Do Nothing", "4) Exit" };
             Boolean repeat = true;
             string line_buffer;
             //string Start_State = ""; int num_states = 0, num_alphabet = 0, num_accepting_states = 0, num_transitions = 0;
@@ -50,10 +50,9 @@ namespace DFS
                 {
                     Console.WriteLine("You have chosen option 1. ");
                     machine = loadDFSM();
-                    //testing
-                    machine.PlayStacks('E', 'a', 'E', 'E');
-                    machine.PlayStacks('a', 'E', 'E', 'E');
-                    machine.printStack();
+                    //machine.PlayStacks('E', 'a', 'E', 'E');
+                    //machine.PlayStacks('a', 'E', 'E', 'E');
+                    //machine.printStack();
                 }
                 else if (line_buffer.StartsWith("2"))
                 {
@@ -206,7 +205,11 @@ namespace DFS
         }
         public static void minimize(PDA themachine)
         {
+            string path = ".//..//..//..//";
             Boolean redun = false;
+            FileStream test = new FileStream(path + "input.txt", FileMode.OpenOrCreate, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(test);
+            writer.Write("test, I'm trying to write to it.");
             if (redun)
             {
                 themachine.checkRedundantState();
@@ -216,6 +219,7 @@ namespace DFS
             {
                 Console.WriteLine("This is a dummy method.");
             }
+            writer.Close();
         }
     }
 }

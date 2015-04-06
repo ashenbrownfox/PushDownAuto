@@ -99,11 +99,21 @@ namespace PushDownAutomata
             }
             else if (pop1 == StackA.Peek())
             {
-                alphabet_buffer = StackA.Pop(); 
-                //Console.WriteLine("Ok, popped {0} on Stack A",pop1);
+                try
+                {
+                    alphabet_buffer = StackA.Pop();
+                    //Console.WriteLine("Ok, popped {0} on Stack A",pop1);
+                }
+                catch(Exception ex)
+                {
+                    UI.FailMessage("REJECTED!");
+                    return;
+                }
+                
             }
             else
             {
+                //return;
                 //Console.WriteLine("Nothing to Pop here on Stack A.");
             }
             if(push1 != 'E'){
@@ -120,8 +130,17 @@ namespace PushDownAutomata
             }
             else if (pop2 == StackB.Peek())
             {
-                StackB.Pop(); 
-                //Console.WriteLine("Ok, popped {0} on Stack B", pop2);
+                try
+                {
+                    StackB.Pop(); 
+                    //Console.WriteLine("Ok, popped {0} on Stack B", pop2);
+                }
+                catch
+                {
+                    UI.FailMessage("REJECTED!");
+                    return;
+                }
+                
             }
             else
             {
@@ -194,7 +213,7 @@ namespace PushDownAutomata
                 Transition transition = Transitions.Find(t => t.StartState == currentState &&
                                                     t.Symbol == symbol);
                 char a,b,c,d;
-                a = transition.Pop1; b = transition.Push1; c = transition.Pop2; d = transition.Push2;
+                a = transition.pop1; b = transition.push1; c = transition.Pop2; d = transition.Push2;
                 PlayStacks(a, b, c, d); //pushes and pops the appropriate stack
                 if (transition == null)
                 {
